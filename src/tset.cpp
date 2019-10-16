@@ -4,7 +4,7 @@
 //   Переработано для Microsoft Visual Studio 2008 Сысоевым А.В. (19.04.2015)
 //
 // Множество - реализация через битовые поля
-#include "tbitfield.h"
+
 #include "tset.h"
 
 TSet::TSet(int mp) : BitField(mp), MaxPower(mp)
@@ -17,13 +17,13 @@ TSet::TSet(const TSet &s) : BitField(s.BitField), MaxPower(s.MaxPower)
 }
 
 // конструктор преобразования типа
-TSet::TSet(const TBitField &bf) : BitField(-1), MaxPower(-1)
+TSet::TSet(const TBitField &bf) : BitField(bf), MaxPower(-1)
 {
 }
 
 TSet::operator TBitField()
 {
-	return *this;
+	return BitField;
 }
 
 int TSet::GetMaxPower(void) const // получить макс. к-во эл-тов
@@ -43,6 +43,7 @@ void TSet::InsElem(const int Elem) // включение элемента мно
 
 void TSet::DelElem(const int Elem) // исключение элемента множества
 {
+	BitField.ClrBit(Elem);
 }
 
 // теоретико-множественные операции
@@ -66,12 +67,17 @@ int TSet::operator!=(const TSet &s) const // сравнение
 
 TSet TSet::operator+(const TSet &s) // объединение
 {
-	return *this;
+	TBitField c = BitField | s.BitField;
+	TSet res(c);
+	
+	return res;
 }
 
 TSet TSet::operator+(const int Elem) // объединение с элементом
 {
-	return *this;
+	TSet p = *this;
+	p.InsElem(Elem);
+	return p;
 }
 
 TSet TSet::operator-(const int Elem) // разность с элементом
@@ -81,22 +87,39 @@ TSet TSet::operator-(const int Elem) // разность с элементом
 
 TSet TSet::operator*(const TSet &s) // пересечение
 {
-	return *this;
+	TBitField c = BitField & s.BitField;
+	TSet res(c);
+
+	return res;
+	
 }
 
 TSet TSet::operator~(void) // дополнение
 {
-	return *this;
+	TSet res(~BitField);
+	return res;
 }
 
 // перегрузка ввода/вывода
 
 istream &operator>>(istream &istr, TSet &s) // ввод
 {
+	int a;
+	istr >> a;
+	while (a >= 0) {
+		s.InsElem(a);
+	}
 	return istr;
 }
 
 ostream& operator<<(ostream &ostr, const TSet &s) // вывод
 {
+	for (int i = 0; i < s.MaxPower; i++)
+	{
+		if (s.IsMember(i))
+		{
+			ostr << i << " ";
+		}
+	}
 	return ostr;
 }
