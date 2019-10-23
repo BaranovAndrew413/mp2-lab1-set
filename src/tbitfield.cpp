@@ -47,7 +47,7 @@ TELEM TBitField::GetMemMask(const int n) const // битовая маска дл
 
 int TBitField::GetLength(void) const // получить длину (к-во битов)
 {
-  return 0;
+  return BitLen;
 }
 
 void TBitField::SetBit(const int n) // установить бит
@@ -79,7 +79,15 @@ int TBitField::GetBit(const int n) const // получить значение б
 
 TBitField& TBitField::operator=(const TBitField &bf) // присваивание
 {
+	if (BitLen != bf.BitLen) {
+		BitLen = bf.BitLen;
+		MemLen = bf.MemLen;
+		pMem = new TELEM[MemLen];
+	}
+	for (int i = 0; i < MemLen; i++)
+		pMem[i] = bf.pMem[i];
 	return *this;
+
 }
 
 int TBitField::operator==(const TBitField &bf) const // сравнение
@@ -100,7 +108,10 @@ int TBitField::operator==(const TBitField &bf) const // сравнение
 
 int TBitField::operator!=(const TBitField &bf) const // сравнение
 {
-  return 0;
+	if (BitLen == bf.BitLen)
+		return 0;
+	else
+		return 1;
 }
 
 TBitField TBitField::operator|(const TBitField &bf) // операция "или"

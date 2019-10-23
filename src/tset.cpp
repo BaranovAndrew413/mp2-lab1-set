@@ -6,6 +6,7 @@
 // Множество - реализация через битовые поля
 
 #include "tset.h"
+#include "tbitfield.h"
 
 TSet::TSet(int mp) : BitField(mp), MaxPower(mp)
 {
@@ -17,9 +18,11 @@ TSet::TSet(const TSet &s) : BitField(s.BitField), MaxPower(s.MaxPower)
 }
 
 // конструктор преобразования типа
-TSet::TSet(const TBitField &bf) : BitField(bf), MaxPower(-1)
+TSet::TSet(const TBitField &bf) : BitField(bf), MaxPower(bf.GetLength())
 {
 }
+
+
 
 TSet::operator TBitField()
 {
